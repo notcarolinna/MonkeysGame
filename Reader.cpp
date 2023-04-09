@@ -20,82 +20,51 @@ Reader::Reader(std::string arquivo) {
 Reader* Reader::Dados() {
 
 	std::ifstream file("./resources/" + arquivo);
-	if (!file.is_open())
-	{
+
+	if (!file.is_open()) {
 		std::cout << "Erro ao abrir o arquivo." << std::endl;
 		return this;
 	}
 
-	// Conta o número de linhas do arquivo, exceto a primeira linha
-	// O número de linhas é útil pra determinar o tamanho do array de ponteiros
-	// do Macaquinho
+	file >> rodadas;
 
-	totalMacaquinhos = std::count(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), '\n') - 1;
-	macaquinhos = new Macaquinho * [totalMacaquinhos];
+	int num_macaquinhos = 0, idx = 0;
 
-	// Volta ao início do arquivo
+	std::string line;
+	while (getline(file, line)) {
+		num_macaquinhos++;
+	}
 
+	macaquinhos = new Macaquinho * [num_macaquinhos];
 	file.clear();
 	file.seekg(0, std::ios::beg);
 
-	std::string line;
-	int count = 0;
+	while (getline(file, line)) {
+		std::istringstream ss(line);
 
-	// Lê cada linha do arquivo
+		int macacoVencedor, macacoPar, macacoImpar;
+		ss >> macacoVencedor >> macacoPar >> macacoImpar;
 
-	while (getline(file, line))
-	{
-		count++;
+		Macaquinho* macaquinho = new Macaquinho(macacoVencedor, macacoImpar, macacoPar);
 
-		if (count == 1)
-		{
-			// A primeira linha contém o número de rodadas
-			int rodadasPos = line.find(" ");
-			rodadas = std::stoi(line.substr(rodadasPos + 1));
-		}
-		else
-		{
-			// Cada linha subsequente contém as informações de um macaquinho
-			std::istringstream ss(line);
-			int macacoVencedor, macacoPar, macacoImpar;
-			std::string trash;
-			ss >> trash >> macacoVencedor >> trash >> trash >> macacoPar >> trash >> trash >> macacoImpar;
-
-			Macaquinho* macaquinho = new Macaquinho(macacoVencedor, macacoImpar, macacoPar);
-
-			// Adiciona as informações do macaquinho
-			std::string info;
-			int n;
-			while (ss >> trash >> n >> trash && std::getline(ss, info))
-			{
-				std::stringstream ss2(info);
-
-				for (int i = 0; i < n; i++)
-				{
-					std::string cocos;
-					ss2 >> cocos;
-
-					int coco = stoi(cocos);
-
-					if (coco % 2 == 0)
-					{
-						macaquinho->addCocosPares(1);
-					}
-					else
-					{
-						macaquinho->addCocosImpares(1);
-					}
-				}
+		int n, coco;
+		ss >> n;
+		for (int i = 0; i < n; i++) {
+			ss >> coco;
+			if (coco % 2 == 0) {
+				macaquinho->addCocosPares(1);
 			}
-
-			macaquinhos[count - 2] = macaquinho;
+			else {
+				macaquinho->addCocosImpares(1);
+			}
 		}
+
+		macaquinhos[idx++] = macaquinho;
 	}
 
 	file.close();
 	return this;
 }
-
 
 int Reader::getRodadas()
 {
