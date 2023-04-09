@@ -7,6 +7,8 @@
 void Jogo(const std::string arquivo, std::vector<std::pair<int, int>>& vencedores) {
 	auto start = std::chrono::high_resolution_clock::now();
 
+	std::cout << "Obtendo Resultados... ";
+
 	Reader dados(arquivo);
 	dados.Dados();
 
@@ -20,7 +22,6 @@ void Jogo(const std::string arquivo, std::vector<std::pair<int, int>>& vencedore
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-	std::cout << "Obtendo Resultados... " << std::endl;
 	std::cout << "Tempo total de execucao: " << duration.count() << "ms." << std::endl;
 }
 
