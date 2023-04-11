@@ -28,18 +28,19 @@ Reader* Reader::Dados() {
 
 	file >> rodadas;
 
-	int num_macaquinhos = 0, idx = 0;
-
-	std::string line;
-	while (getline(file, line)) {
-		num_macaquinhos++;
-	}
+	// Conta o número de linhas no arquivo (cada linha representa um macaquinho)
+	int num_macaquinhos = std::count_if(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), [](char c) { return c == '\n'; }) + 1;
 
 	macaquinhos = new Macaquinho * [num_macaquinhos];
+
+	// Volta para o início do arquivo
 	file.clear();
 	file.seekg(0, std::ios::beg);
 
-	while (getline(file, line)) {
+	// Lê cada linha do arquivo e cria um objeto Macaquinho correspondente
+	std::string line;
+	for (int i = 0; i < num_macaquinhos; i++) {
+		std::getline(file, line);
 		std::istringstream ss(line);
 
 		int macacoVencedor, macacoPar, macacoImpar;
@@ -49,7 +50,7 @@ Reader* Reader::Dados() {
 
 		int n, coco;
 		ss >> n;
-		for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
 			ss >> coco;
 			if (coco % 2 == 0) {
 				macaquinho->addCocosPares(1);
@@ -59,7 +60,7 @@ Reader* Reader::Dados() {
 			}
 		}
 
-		macaquinhos[idx++] = macaquinho;
+		macaquinhos[i] = macaquinho;
 	}
 
 	file.close();
