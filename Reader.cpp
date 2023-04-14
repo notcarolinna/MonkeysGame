@@ -18,63 +18,53 @@ Reader::Reader(std::string arquivo) {
 }
 
 Reader* Reader::Dados() {
+	std::string trash;
+	std::ifstream file("./resources/" + arquivo);
+	std::string line;
+	std::getline(file, line);
 
-    std::string trash;
+	if (!file.is_open()) {
+		std::cout << "Erro ao abrir o arquivo." << std::endl;
+		return this;
+	}
 
-    std::ifstream file("./resources/" + arquivo);
-    if (!file.is_open()) {
-        std::cout << "Erro ao abrir o arquivo." << std::endl;
-        return this;
-    }
+	file >> trash >> rodadas >> trash;
 
-    std::istream& input = file;
+	int num_macaquinhos = std::count_if(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), [](char c) { return c == '\n'; }) + 1;
 
-    input >> trash >> rodadas >> trash;
+	macaquinhos = new Macaquinho * [num_macaquinhos - 2];
 
-    int num_macaquinhos = 0;
+	file.clear();
+	file.seekg(0, std::ios::beg);
 
-    // Conta o número de linhas no arquivo (cada linha representa um macaquinho)
-    while (std::getline(input, trash)) {
-        num_macaquinhos++;
-    }
-    num_macaquinhos -= 2;
+	// Lê cada linha do arquivo e cria um objeto Macaquinho correspondente
 
-    // Volta para o início do arquivo
-    input.clear();
-    input.seekg(0, std::ios::beg);
+	for (int i = 0; i < num_macaquinhos - 2; i++) {
+		std::getline(file, line);
+		std::istringstream ss(line);
 
-    // Lê cada linha do arquivo e cria um objeto Macaquinho correspondente
-    macaquinhos = new Macaquinho * [num_macaquinhos];
+		int macacoVencedor, macacoPar, macacoImpar, numberCoconuts;
+		ss >> trash >> macacoVencedor >> trash >> trash >> macacoPar >> trash >> trash >> macacoImpar >> trash >> numberCoconuts >> trash;
 
-    std::getline(input, trash); // pula a primeira linha
+		Macaquinho* macaquinho = new Macaquinho(macacoVencedor, macacoImpar, macacoPar);
 
-    for (int i = 0; i < num_macaquinhos; i++) {
-        std::getline(input, trash);
+		int coco;
+		for (int j = 0; j < numberCoconuts; j++) {
+			ss >> coco;
+			if (coco % 2 == 0) {
+				macaquinho->addCocosPares(1);
+			}
+			else {
+				macaquinho->addCocosImpares(1);
+			}
+		}
 
-        std::istringstream ss(trash);
+		macaquinhos[i] = macaquinho;
+		totalMacaquinhos++;
+	}
 
-        int macacoVencedor, macacoPar, macacoImpar, numberCoconuts;
-        ss >> trash >> macacoVencedor >> trash >> trash >> macacoPar >> trash >> trash >> macacoImpar >> trash >> numberCoconuts >> trash;
-
-        Macaquinho* macaquinho = new Macaquinho(macacoVencedor, macacoImpar, macacoPar);
-
-        int coco;
-        for (int j = 0; j < numberCoconuts; j++) {
-            ss >> coco;
-            if (coco % 2 == 0) {
-                macaquinho->addCocosPares(1);
-            }
-            else {
-                macaquinho->addCocosImpares(1);
-            }
-        }
-
-        macaquinhos[i] = macaquinho;
-        totalMacaquinhos++;
-    }
-
-    file.close();
-    return this;
+	file.close();
+	return this;
 }
 
 int Reader::getRodadas()
