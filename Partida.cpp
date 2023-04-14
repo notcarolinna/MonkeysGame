@@ -20,6 +20,8 @@ Macaquinho* Partida::Vencedor() {
 void Partida::IniciarPartida() {
 	int numRodadas = reader.getRodadas();
 
+	// std::cout << reader.getTotalMacaquinhos() << std::endl;
+
 	for (int i = 0; i < numRodadas; i++)
 	{
 		for (int j = 0; j < reader.getTotalMacaquinhos(); j++)
