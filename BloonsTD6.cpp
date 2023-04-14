@@ -9,11 +9,13 @@ void Jogo(const std::string arquivo, std::vector<std::pair<int, int>>& vencedore
 
 	std::cout << "Obtendo Resultados... ";
 
-	Reader dados(arquivo);
-	dados.Dados();
+	Reader* dados = new Reader(arquivo);
+	dados->Dados();
 
-	Macaquinho** macaquinhos = dados.getMacaquinhos();
-	Partida partida(macaquinhos, dados);
+	std::cout << dados->getTotalMacaquinhos() << std::endl;
+
+	Macaquinho** macaquinhos = dados->getMacaquinhos();
+	Partida partida(macaquinhos, *dados);
 	partida.IniciarPartida();
 
 	Macaquinho* vencedor = partida.Vencedor();
