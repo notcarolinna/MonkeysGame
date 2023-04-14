@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
+#include <iomanip>
 #include "Partida.h"
 #include "Reader.h"
 
@@ -22,9 +23,9 @@ void Jogo(const std::string arquivo, std::vector<std::pair<int, int>>& vencedore
 	vencedores.push_back(std::make_pair(vencedor->getMacacoVencedor(), vencedor->getCocos()));
 
 	auto end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
 
-	std::cout << "Tempo total de execucao: " << duration.count() << "ms." << std::endl;
+	std::cout << "Tempo total de execucao: " << std::fixed << std::setprecision(2) << duration.count() << " segundos." << std::endl;
 }
 
 
