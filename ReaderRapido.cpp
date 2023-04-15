@@ -19,53 +19,47 @@ Reader::Reader(std::string arquivo) {
 }
 
 Reader* Reader::Dados() {
+	std::ifstream file("./resources/" + arquivo);
+	std::string trash;
+	std::vector<Macaquinho*> macaquinhos;
 
-    std::string trash;
-    std::ifstream file("./resources/" + arquivo);
+	if (!file.is_open()) {
+		std::cout << "Erro ao abrir o arquivo." << std::endl;
+		return this;
+	}
 
-    if (!file.is_open()) {
-        std::cout << "Erro ao abrir o arquivo." << std::endl;
-        return this;
-    }
+	file >> trash >> rodadas >> trash;
 
-    // Lê a primeira linha do arquivo para obter o número de rodadas
-    file >> trash >> rodadas >> trash;
+	while (true) {
+		int macacoVencedor, macacoPar, macacoImpar, numberCoconuts;
+		file >> trash >> macacoVencedor >> trash >> trash >> macacoPar >> trash >> trash >> macacoImpar >> trash >> numberCoconuts >> trash;
 
-    // Lê as informações de cada macaquinho e cria um objeto Macaquinho correspondente
-    std::vector<Macaquinho*> macaquinhos;
+		if (file.eof()) {
+			break;
+		}
 
-    while (true) {
-        int macacoVencedor, macacoPar, macacoImpar, numberCoconuts;
-        file >> trash >> macacoVencedor >> trash >> trash >> macacoPar >> trash >> trash >> macacoImpar >> trash >> numberCoconuts >> trash;
+		Macaquinho* macaquinho = new Macaquinho(macacoVencedor, macacoImpar, macacoPar);
 
-        if (file.eof()) {
-            break;
-        }
+		int coco;
+		for (int j = 0; j < numberCoconuts; j++) {
+			file >> coco;
+			if (coco % 2 == 0) {
+				macaquinho->addCocosPares(1);
+			}
+			else {
+				macaquinho->addCocosImpares(1);
+			}
+		}
 
-        Macaquinho* macaquinho = new Macaquinho(macacoVencedor, macacoImpar, macacoPar);
+		macaquinhos.push_back(macaquinho);
+	}
 
-        int coco;
-        for (int j = 0; j < numberCoconuts; j++) {
-            file >> coco;
-            if (coco % 2 == 0) {
-                macaquinho->addCocosPares(1);
-            }
-            else {
-                macaquinho->addCocosImpares(1);
-            }
-        }
+	file.close();
 
-        macaquinhos.push_back(macaquinho);
-    }
-
-    file.close();
-
-    // Atualiza as informações do Reader
-    totalMacaquinhos = macaquinhos.size();
-    this->macaquinhos = new Macaquinho * [totalMacaquinhos];
-    std::copy(macaquinhos.begin(), macaquinhos.end(), this->macaquinhos);
-
-    return this;
+	// Atualiza as informações do Reader
+	totalMacaquinhos = macaquinhos.size();
+	this->macaquinhos = new Macaquinho * [totalMacaquinhos];
+	std::copy(macaquinhos.begin(), macaquinhos.end(), this->macaquinhos);
 }
 
 int Reader::getRodadas()
