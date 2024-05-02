@@ -7,8 +7,8 @@ Following this, the initial number of coconuts for each monkey is provided, alon
 To compile the project, it is necessary to have g++ installed and compile using the following command line in the terminal:
 
 ```
-g++ Data.cpp Reader.cpp University.cpp -o University
-./University
+g++ Macaquinho.cpp Partida.cpp ReaderRapido.cpp BloonsTD6.cpp -o BloonsTD6
+./BloonsTD6
 ```
 
 ### Operation
